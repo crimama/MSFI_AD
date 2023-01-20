@@ -27,6 +27,7 @@ class Callbacks:
             os.mkdir(self.save_dir)
             
         # save config 
+        self.cfg['transform'] = ''
         with open(f"{self.save_dir}/config.yaml",'w') as f:
             yaml.dump(self.cfg,f)
             
