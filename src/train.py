@@ -76,8 +76,9 @@ def valid_epoch(model,test_loader,criterion,cfg):
 
 def build_anomaly_map(t_features,s_features,cfg):
     score_map = 1. 
+    feature_maps = torch.zeros((len(t_features[0]),len(t_features),cfg['imgsize'],cfg['imgsize']))
     for i in range(len(t_features)):
-        feature_maps = torch.zeros((len(t_features[0]),len(t_features),cfg['imgsize'],cfg['imgsize']))
+        #feature_maps = torch.zeros((len(t_features[0]),len(t_features),cfg['imgsize'],cfg['imgsize']))
         t_f,s_f = t_features[i],s_features[i]
         t_f,s_f = F.normalize(t_f,dim=1), F.normalize(s_f,dim=1)
         
@@ -86,9 +87,10 @@ def build_anomaly_map(t_features,s_features,cfg):
                                 size  = (cfg['imgsize'],cfg['imgsize']),
                                 mode  = 'bilinear',
                                 align_corners = False)
-        score_map = score_map*layer_maps
+        #score_map = score_map*layer_maps
         
-        feature_maps[:,i,:,:] = score_map.squeeze(dim=1)
+        #feature_maps[:,i,:,:] = score_map.squeeze(dim=1)
+        feature_maps[:,i,:,:] = layer_maps.squeeze(dim=1)
     anomaly_map = torch.mean(feature_maps,dim=1,keepdim=True)  
     return anomaly_map 
     
