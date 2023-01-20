@@ -1,4 +1,4 @@
-EXP_NAME: BASELINE
+EXP_NAME: Paper_implementation
 SEED: 42
 
 #DATASET:
@@ -7,21 +7,21 @@ name: VisA
 mode: full 
 imgcls : candle 
 imgsize : 256 
-transform : no_augmentation
+transformname : no_augmentation
 
 
 #MODEL:
 modeltype : independent 
 
 #TRAIN:
-Batchsize: 32
+Batchsize: 16
 nepochs: 50
 usewandb: true
 device : cuda 
 
 #OPTIMIZER:
-optimizer: Adam 
-lr: 0.001
+optimizer: SGD 
+lr: 0.05
 beta1 : 0.5 
 
 #SCHEDULER:
