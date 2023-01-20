@@ -129,3 +129,6 @@ dmypy.json
 .pyre/
 datasets/
 /datasets
+/wandb
+wandb/
+*.pt

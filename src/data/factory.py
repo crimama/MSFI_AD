@@ -1,4 +1,6 @@
 import pandas as pd 
+import numpy as np 
+import cv2 
 import torch 
 from torchvision import transforms 
 from torch.utils.data import Dataset,DataLoader
@@ -19,7 +21,8 @@ def create_dataset(cfg : dict):
                             root          = cfg['root'],
                             img_cls       = cfg['imgcls'],
                             img_size      = cfg['imgsize'],
-                            transform     = __import__('src').data.augmentation.__dict__["default_augmentation"](),
+                            #transform     = __import__('src').data.augmentation.__dict__["default_augmentation"](),
+                            transform     = transforms.Compose([transforms.ToTensor()]),
                             mode          = cfg['mode'],
                             train = False
                             )
@@ -80,11 +83,11 @@ class VisaDataset(Dataset):
                 self.msk_dirs = self.df[self.df['split']=='test']['mask'].values
         else: # In case only using one class of image 
             if train:
-                self.img_dirs = self.df[(self.df['split']=='train') & (self.df['object'] == 'candle')]['image'].values
-                self.msk_dirs = self.df[(self.df['split']=='train') & (self.df['object'] == 'candle')]['mask'].values
+                self.img_dirs = self.df[(self.df['split']=='train') & (self.df['object'] == self.img_cls)]['image'].values
+                self.msk_dirs = self.df[(self.df['split']=='train') & (self.df['object'] == self.img_cls)]['mask'].values
             else:
-                self.img_dirs = self.df[(self.df['split']=='test') & (self.df['object'] == 'candle')]['image'].values
-                self.msk_dirs = self.df[(self.df['split']=='test') & (self.df['object'] == 'candle')]['mask'].values
+                self.img_dirs = self.df[(self.df['split']=='test') & (self.df['object'] == self.img_cls)]['image'].values
+                self.msk_dirs = self.df[(self.df['split']=='test') & (self.df['object'] == self.img_cls)]['mask'].values
             
     def load_img(self,img_dir):
         img = Image.open(os.path.join(self.root,img_dir))
@@ -94,9 +97,10 @@ class VisaDataset(Dataset):
     def load_msk(self,msk_dir):
         try:
             msk = Image.open(os.path.join(self.root,msk_dir))
-            msk = self.msk_transform(msk)
+            msk = cv2.resize(np.array(msk),dsize=(self.img_size,self.img_size))
+            msk = np.expand_dims(msk,axis=-1)
         except:
-            msk = torch.zeros((1,256,256))
+            msk = np.zeros((self.img_size,self.img_size,1))
         return msk 
         
     
