@@ -1,0 +1,36 @@
+EXP_NAME: BASELINE
+SEED: 42
+
+#DATASET:
+datadir: /Volume/MSFI_AD/datasets/
+name: VisA
+mode: full 
+imgcls : candle 
+imgsize : 256 
+transform : no_augmentation
+
+
+#MODEL:
+modeltype : independent 
+
+#TRAIN:
+Batchsize: 32
+nepochs: 50
+usewandb: true
+device : cuda 
+
+#OPTIMIZER:
+optimizer: Adam 
+lr: 0.001
+beta1 : 0.5 
+
+#SCHEDULER:
+min_lr: 0.0001
+warmup_ratio: 0.1
+usescheduler: true
+
+#LOG:
+log_interval: 100
+
+#RESULT:
+savedirs: /Volume/MSFI_AD/save_models

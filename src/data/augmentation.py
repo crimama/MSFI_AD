@@ -1,6 +1,9 @@
 from torchvision import transforms
 from torchvision.transforms import RandAugment
 
+def no_augmentation():
+    transform = transforms.Compose([transforms.ToTensor()])
+    return transform 
 
 def weak_augmentation():
     transform = transforms.Compose([

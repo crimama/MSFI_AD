@@ -8,20 +8,18 @@ import os
 from PIL import Image 
 
 
-
-def create_dataset(cfg : dict):
+def create_dataset(cfg,data_dir,img_cls,img_size,mode):
     trainset = VisaDataset(
-                            root          = cfg['root'],
-                            img_cls       = cfg['imgcls'],
-                            img_size      = cfg['imgsize'],
+                            root         = data_dir,
+                            img_cls       = img_cls,
+                            img_size      = img_size,
                             transform     = cfg['transform'],
-                            mode          = cfg['mode']
+                            mode          = mode
                             )
     testset = VisaDataset(
-                            root          = cfg['root'],
-                            img_cls       = cfg['imgcls'],
-                            img_size      = cfg['imgsize'],
-                            #transform     = __import__('src').data.augmentation.__dict__["default_augmentation"](),
+                            root         = data_dir,
+                            img_cls       = img_cls,
+                            img_size      = img_size,
                             transform     = transforms.Compose([transforms.ToTensor()]),
                             mode          = cfg['mode'],
                             train = False
@@ -35,11 +33,8 @@ def create_dataloader(dataset, batch_size: int = 32, shuffle: bool = False):
     return DataLoader(
                       dataset     = dataset,
                       batch_size  = batch_size,
-                      shuffle     = shuffle,
-                      num_workers = 0
+                      shuffle     = shuffle
                      )
-
-
 
 
 
@@ -73,7 +68,7 @@ class VisaDataset(Dataset):
         return df 
     
     def _load_dirs(self,img_cls,train):
-        # Choose btw Training or Test and additionaly Class of img (ex : Candle)
+        # Choose either Training or Test and additionaly Class of img (ex : Candle)
         if img_cls == 'all': # In case using All type of Image Claases 
             if train:
                 self.img_dirs = self.df[self.df['split']=='train']['image'].values
@@ -91,7 +86,7 @@ class VisaDataset(Dataset):
             
     def load_img(self,img_dir):
         img = Image.open(os.path.join(self.root,img_dir))
-        img = self.img_transform(img)
+        img = self.img_transform(img)        
         return img 
 
     def load_msk(self,msk_dir):

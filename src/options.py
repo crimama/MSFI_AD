@@ -71,7 +71,7 @@ class Options():
             cfg[arg] = temp[n]
             
         # Transform 
-        cfg['transform'] = __import__('src').data.augmentation.__dict__[f"{cfg['transform']}_augmentation"]()
+        cfg['transform'] = __import__('src').data.augmentation.__dict__[f"{cfg['transform']}"]()
 
         return cfg
         

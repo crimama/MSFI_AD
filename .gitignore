@@ -132,3 +132,4 @@ datasets/
 /wandb
 wandb/
 *.pt
+/save_models

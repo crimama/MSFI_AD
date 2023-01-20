@@ -2,12 +2,13 @@ import torch
 import wandb 
 import os 
 import numpy as np 
+import yaml 
 
 class Callbacks:
     def __init__(self,cfg):
         #init 
         self.cfg = cfg 
-        self.save_dir = os.path.join(cfg['savedirs'],cfg['savename'])
+        self.save_dir = os.path.join(cfg['savedirs'],cfg['EXP_NAME'])
         self.make_dir()
         #logging 
         self.wandb_init()
@@ -18,12 +19,16 @@ class Callbacks:
     def make_dir(self):
         if os.path.exists(self.save_dir):
             n = 0 
-            while os.path.exists(save_dir + str(n)):
+            while os.path.exists(self.save_dir + str(n)):
                 n +=1 
             self.save_dir = self.save_dir + str(n)
             os.mkdir(self.save_dir)
         else:
             os.mkdir(self.save_dir)
+            
+        # save config 
+        with open(f"{self.save_dir}/config.yaml",'w') as f:
+            yaml.dump(self.cfg,f)
             
         
     def check_point(self,model,name):
@@ -31,11 +36,12 @@ class Callbacks:
     
     def wandb_init(self):
         if self.cfg['usewandb']:
-            wandb.init(project="MSFI_AD",name=cfg['savename'])
+            wandb.init(project="MSFI_AD",name=self.cfg['EXP_NAME'])
     
     def logging(self,log):
         print(f" \nEpoch : {log['Epoch']}")
         print(f" Train loss : {log['train_loss']:.3f} | Valid loss : {log['valid_loss']:.3f}")
+        print(f" Image AUROC : {log['image_auroc']:.3f} | Pixel AUROC : {log['pixel_auroc']:.3f}")
     
     def epoch(self,model,log,check='best'):
         # logging 
